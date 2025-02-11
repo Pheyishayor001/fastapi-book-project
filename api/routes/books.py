@@ -47,6 +47,21 @@ async def create_book(book: Book):
 async def get_books() -> OrderedDict[int, Book]:
     return db.get_books()
 
+@router.get("/{book_id}", status_code=status.HTTP_200_OK)
+async def get_book(book_id: str):  # Accept book_id as a string for validation
+    if not book_id.isdigit():
+        raise HTTPException(status_code=404, detail="Not Found")
+    
+    book_id = int(book_id)  # Convert to integer after validation
+    
+    if book_id <= 0:
+        raise HTTPException(status_code=404, detail="Not Found")
+    
+    book = db.books.get(book_id)
+    if not book:
+        raise HTTPException(status_code=404, detail="Not Found")
+    
+    return book
 
 @router.put("/{book_id}", response_model=Book, status_code=status.HTTP_200_OK)
 async def update_book(book_id: int, book: Book) -> Book:

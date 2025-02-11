@@ -1,0 +1,32 @@
+name: CI pipeline
+
+on:
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v3
+        with: 
+          python-version: 3.12
+      - name: initiating pytest
+        run: | 
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r requirements.txt
+          pip install pytest
+          pytest
+
+      - name: Set build status to success
+        if: success()
+        run: echo " test suceeded"
+
+      - name: Set build status to failure
+        if: failure()
+        run: echo "test failed"
